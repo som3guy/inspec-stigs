@@ -60,9 +60,15 @@ All authorized non-administrative users must be mapped to the user_u role or the
 If they are not mapped in this way, this is a finding.'
 
 # START_DESCRIBE RHEL-07-020090
-  describe file('') do
-    it { should match // }
-  end
+  users = command('awk -F: \'($3 >= 1000) {print $1}\' /etc/passwd').stdout.chomp
+  users.each { |user|
+    describe command("semanage login -l |grep #{user} ") do
+      its('stdout') { should match /(sysadm_u|staff_u)/ }
+    end
+  } unless users.nil?
+    describe command('semanage login -l |grep root') do
+      its('stdout') { should match /sysadm_u/ }
+    end
 # STOP_DESCRIBE RHEL-07-020090
 
 end

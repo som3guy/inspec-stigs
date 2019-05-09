@@ -38,8 +38,9 @@ The entry for use only smartcard for login may be enabled, and the smartcard mod
 If smartcard authentication is disabled or the smartcard and smartcard removal actions are blank, this is a finding.'
 
 # START_DESCRIBE RHEL-07-010500
-  describe file('') do
-    it { should match // }
+  describe command('authconfig --test | grep -i smartcard') do
+    its('stdout') { should match /smartcard\s+module\s+=\s+".+"/ }
+    its('stdout') { should match /smartcard\s+removal\s+action\s+=\s+".+"/ }
   end
 # STOP_DESCRIBE RHEL-07-010500
 

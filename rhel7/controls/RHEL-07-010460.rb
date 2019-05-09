@@ -44,8 +44,9 @@ password_pbkdf2 superusers-account password-hash
 If the root password entry does not begin with “password_pbkdf2”, this is a finding.'
 
 # START_DESCRIBE RHEL-07-010460
-  describe file('') do
-    it { should match // }
+  only_if { file('/boot/grub2/grub.cfg').exist? }
+  describe command('grep -i password /boot/grub2/grub.cfg') do
+    its('stdout') { should match /password_pbkdf2/i }
   end
 # STOP_DESCRIBE RHEL-07-010460
 
